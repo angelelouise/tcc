@@ -20,6 +20,7 @@ import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.imgproc.Imgproc;
 
+
 public class Main_Show_Camera extends AppCompatActivity implements CvCameraViewListener2{
     // Used for logging success or failure messages
     private static final String TAG = "OCVSample::Activity";
