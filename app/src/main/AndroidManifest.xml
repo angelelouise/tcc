@@ -15,7 +15,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".Main_Show_Camera">//declara a nova activity
+        <activity android:name=".Main_Show_Camera" android:screenOrientation="landscape" >//declara a nova activity
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
         </activity>
     </application>
     <supports-screens   android:resizeable="true"

@@ -8,8 +8,9 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="teste.tcc.tccv1.Menu"
-    android:onClick="startSecondActivity">
+    tools:context="teste.tcc.tccv1.Menu">
+    //android:onClick="startSecondActivity"
+
 
     <ImageButton
         android:layout_width="wrap_content"
