@@ -41,6 +41,12 @@ public class Main_Show_Camera extends AppCompatActivity implements CvCameraViewL
     Mat mRgba;
     Mat mRgbaF;
     Mat mRgbaT;
+    Mat mGray; //facilitar o calculo do programa
+    Mat histImgR;
+    Mat mRgba_anterior;
+    int width;
+    int height;
+    int nbins =64;
 
     // Variáveis para camera
     int num_cameras;
@@ -116,26 +122,41 @@ public class Main_Show_Camera extends AppCompatActivity implements CvCameraViewL
     }
 //Recebe os dados da imagem quando o preview da camera aparece na tela
     public void onCameraViewStarted(int width, int height) {
-
-        mRgba = new Mat(height, width, CvType.CV_8UC4);
+        int histH = nbins/2;
+        int histW = nbins;
+        /*mRgba = new Mat(height, width, CvType.CV_8UC4);
         mRgbaF = new Mat(height, width, CvType.CV_8UC4);
-        mRgbaT = new Mat(width, width, CvType.CV_8UC4);
+        mRgbaT = new Mat(width, width, CvType.CV_8UC4);*/
+        mRgba = new Mat(height, width, CvType.CV_8UC4);
+        histImgR = new Mat(histH, histW, CvType.CV_8UC4);
+
+        this.width = width;
+        this.height = height;
 
     }
 //Destroi os dados da imagem quando vc para o preview da camera
     public void onCameraViewStopped() {
         mRgba.release();
+        mGray.release();
     }
 //Deixa a camera melhor posicionada
     public Mat onCameraFrame(CvCameraViewFrame inputFrame) {
 
         // TODO Auto-generated method stub
         mRgba = inputFrame.rgba();
+        mGray = inputFrame.gray();
         // Rotate mRgba 90 degrees
-        Core.transpose(mRgba, mRgbaT);
-        Imgproc.resize(mRgbaT, mRgbaF, mRgbaF.size(), 0,0, 0);
-        Core.flip(mRgbaF, mRgba, 0 );
+        //Core.transpose(mRgba, mRgbaT);
+        //Imgproc.resize(mRgbaT, mRgbaF, mRgbaF.size(), 0,0, 0);
+        //Core.flip(mRgbaF, mRgba, 1 );
+
+
 
         return mRgba; // This function must return
+    }
+    public double comp_histogramas (Mat mRgba, Mat mRgba_anterior){
+        double correlacao;
+        correlacao = Imgproc.compareHist(mRgba, mRgba_anterior, Imgproc.CV_COMP_CORREL);
+        return correlacao;
     }
 }
