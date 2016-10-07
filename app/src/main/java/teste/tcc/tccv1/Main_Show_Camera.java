@@ -87,7 +87,7 @@ public class Main_Show_Camera extends AppCompatActivity implements CvCameraViewL
         mOpenCvCameraView.setCvCameraViewListener(this);
         //mOpenCvCameraView.setMaxFrameSize(1000, 800);
 
-        //um switch listenner
+        //um switch listenner tem que ser colocado no método oncreate
         Switch swap = (Switch) findViewById(R.id.swap);
         swap.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener()
         {
@@ -165,12 +165,16 @@ public class Main_Show_Camera extends AppCompatActivity implements CvCameraViewL
 
         return mRgba; // This function must return
     }
+    //função para comparar histogramas
     public double comp_histogramas (Mat mRgba, Mat mRgba_anterior){
         double correlacao;
         correlacao = Imgproc.compareHist(mRgba, mRgba_anterior, Imgproc.CV_COMP_CORREL);
         return correlacao;
     }
-    //função pra trocar de camera
+    /*função pra trocar de camera, mCameraId começa com valor inicial 0, cada vez que o switch é usado seus valores são
+    * trocados entre 1 e 0
+    * 0 é o modo OFF que é a back
+    * 1 é o modo ON que é o front*/
     public void swap (){
         mCameraId = mCameraId^1; //troca de 1 pra 0 e vice-versa;
         mOpenCvCameraView.disableView();
