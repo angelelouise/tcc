@@ -4,10 +4,13 @@ import android.hardware.Camera;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.MenuItem;
 import android.view.SurfaceView;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.CompoundButton;
+import android.widget.EditText;
+import android.widget.Switch;
+import android.widget.TextView;
 
 // OpenCV classes
 import org.opencv.android.JavaCameraView;
@@ -33,24 +36,17 @@ public class Main_Show_Camera extends AppCompatActivity implements CvCameraViewL
     // Loads camera view of OpenCV for us to use. This lets us see using OpenCV
     private CameraBridgeViewBase mOpenCvCameraView;
 
-    // Used in Camera selection from menu (when implemented)
-    private boolean              mIsJavaCamera = true;
-    private MenuItem             mItemSwitchCamera = null;
-
     // These variables are used (at the moment) to fix camera orientation from 270degree to 0degree
     Mat mRgba;
     Mat mRgbaF;
     Mat mRgbaT;
     Mat mGray; //facilitar o calculo do programa
-    Mat histImgR;
     Mat mRgba_anterior;
     int width;
     int height;
-    int nbins =64;
-
+    double limite = 0.97;
     // Variáveis para camera
-    int num_cameras;
-    int cam_selecionada;
+    private int mCameraId =0;
 
 //OpenCV Manager, ajuda o app a se comunicar com o android pra fazer o openCV funcionar
     private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
@@ -90,8 +86,21 @@ public class Main_Show_Camera extends AppCompatActivity implements CvCameraViewL
 
         mOpenCvCameraView.setCvCameraViewListener(this);
         //mOpenCvCameraView.setMaxFrameSize(1000, 800);
-        //pegar o número de cameras disponíveis
 
+        //um switch listenner
+        Switch swap = (Switch) findViewById(R.id.swap);
+        swap.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener()
+        {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked){
+                if(isChecked){
+                    swap();
+                }
+                else{
+                    swap();
+                }
+            }
+        });
     }
     //handlers para os eventos de pausa, resume, closed/destroyed
     @Override
@@ -122,14 +131,11 @@ public class Main_Show_Camera extends AppCompatActivity implements CvCameraViewL
     }
 //Recebe os dados da imagem quando o preview da camera aparece na tela
     public void onCameraViewStarted(int width, int height) {
-        int histH = nbins/2;
-        int histW = nbins;
         /*mRgba = new Mat(height, width, CvType.CV_8UC4);
         mRgbaF = new Mat(height, width, CvType.CV_8UC4);
         mRgbaT = new Mat(width, width, CvType.CV_8UC4);*/
         mRgba = new Mat(height, width, CvType.CV_8UC4);
-        histImgR = new Mat(histH, histW, CvType.CV_8UC4);
-
+        mRgba_anterior = new Mat(height, width, CvType.CV_8UC4);
         this.width = width;
         this.height = height;
 
@@ -149,7 +155,12 @@ public class Main_Show_Camera extends AppCompatActivity implements CvCameraViewL
         //Core.transpose(mRgba, mRgbaT);
         //Imgproc.resize(mRgbaT, mRgbaF, mRgbaF.size(), 0,0, 0);
         //Core.flip(mRgbaF, mRgba, 1 );
+        if(comp_histogramas(mRgba,mRgba_anterior)< limite){
+           EditText teste = (EditText) findViewById(R.id.teste);
+           teste.setText("Mexeu", TextView.BufferType.EDITABLE);
+        }
 
+        mRgba_anterior = mRgba.clone();
 
 
         return mRgba; // This function must return
@@ -159,4 +170,12 @@ public class Main_Show_Camera extends AppCompatActivity implements CvCameraViewL
         correlacao = Imgproc.compareHist(mRgba, mRgba_anterior, Imgproc.CV_COMP_CORREL);
         return correlacao;
     }
+    //função pra trocar de camera
+    public void swap (){
+        mCameraId = mCameraId^1; //troca de 1 pra 0 e vice-versa;
+        mOpenCvCameraView.disableView();
+        mOpenCvCameraView.setCameraIndex(mCameraId);
+        mOpenCvCameraView.enableView();
+    }
+
 }

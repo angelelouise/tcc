@@ -15,4 +15,32 @@
         opencv:show_fps="true"
         opencv:camera_id="any" />
 
+    <Switch
+        android:text="Switch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/show_camera_activity_java_surface_view"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginRight="18dp"
+        android:layout_marginEnd="18dp"
+        android:layout_marginTop="24dp"
+        android:textOff="Back"
+        android:textOn="Front"
+        android:id="@+id/swap" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="textPersonName"
+        android:text="Name"
+        android:ems="10"
+        android:layout_alignParentBottom="true"
+        android:layout_toRightOf="@+id/show_camera_activity_java_surface_view"
+        android:layout_toEndOf="@+id/show_camera_activity_java_surface_view"
+        android:layout_marginLeft="29dp"
+        android:layout_marginStart="29dp"
+        android:layout_marginBottom="30dp"
+        android:id="@+id/teste" />
+
 </RelativeLayout>
