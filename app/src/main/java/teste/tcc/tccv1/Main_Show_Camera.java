@@ -14,6 +14,9 @@ import android.widget.EditText;
 import android.widget.Switch;
 import android.widget.TextView;
 
+import org.opencv.core.MatOfFloat;
+import org.opencv.core.MatOfInt;
+import org.opencv.imgcodecs.Imgcodecs;
 // OpenCV classes
 import org.opencv.android.JavaCameraView;
 import org.opencv.android.BaseLoaderCallback;
@@ -25,11 +28,16 @@ import org.opencv.android.OpenCVLoader;
 import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
+import org.opencv.core.Point;
+import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 import teste.tcc.tccv1.histogramas;
-import java.util.List;
 
+import java.util.Arrays;
+import java.util.List;
+import java.io.FileOutputStream;
+import java.io.InputStream;
 
 
 
@@ -46,11 +54,19 @@ public class Main_Show_Camera extends AppCompatActivity implements CvCameraViewL
     Mat mRgbaT;
     Mat mGray; //facilitar o calculo do programa
     Mat mRgba_anterior;
+    Mat hist0;
+    Mat hist1;
     int width;
     int height;
     double limite = 0.97;
     // Variáveis para camera
     private int mCameraId =0;
+    //variáveis para o histograma
+    int hist_bins = 30;           //number of histogram bins
+    //int hist_range[]= {0,180};//histogram range
+    MatOfFloat ranges;
+    MatOfInt histSize;
+    boolean tag=false;
     histogramas hist;
     private boolean bProcessing = false;
     Handler mHandler = new Handler(Looper.getMainLooper());
@@ -63,6 +79,8 @@ public class Main_Show_Camera extends AppCompatActivity implements CvCameraViewL
                 {
                     Log.i(TAG, "OpenCV loaded successfully");
                     mOpenCvCameraView.enableView(); // essa variável é a ponte entre a camera e o openCV
+                    ranges = new MatOfFloat( 0f,180f,0f,256f );
+                    histSize = new MatOfInt(hist_bins,hist_bins);
                 } break;
                 default:
                 {
@@ -142,6 +160,8 @@ public class Main_Show_Camera extends AppCompatActivity implements CvCameraViewL
         mRgbaT = new Mat(width, width, CvType.CV_8UC4);*/
         mRgba = new Mat(height, width, CvType.CV_8UC4);
         mRgba_anterior = new Mat(height, width, CvType.CV_8UC4);
+        hist0 = new Mat(hist_bins, hist_bins, CvType.CV_8UC4);
+        hist1 = new Mat(hist_bins, hist_bins, CvType.CV_8UC4);
         this.width = width;
         this.height = height;
 
@@ -150,6 +170,9 @@ public class Main_Show_Camera extends AppCompatActivity implements CvCameraViewL
     public void onCameraViewStopped() {
         mRgba.release();
         mGray.release();
+        mRgba_anterior.release();
+        hist0.release();
+        hist1.release();
     }
 //Deixa a camera melhor posicionada
     public Mat onCameraFrame(CvCameraViewFrame inputFrame) {
@@ -157,25 +180,37 @@ public class Main_Show_Camera extends AppCompatActivity implements CvCameraViewL
         // TODO Auto-generated method stub
         mRgba = inputFrame.rgba();
         mGray = inputFrame.gray();
-        // Rotate mRgba 90 degrees
-        //Core.transpose(mRgba, mRgbaT);
-        //Imgproc.resize(mRgbaT, mRgbaF, mRgbaF.size(), 0,0, 0);
-        //Core.flip(mRgbaF, mRgba, 1 );
-        if(hist.tag()){
+
+        /*if(hist.tag()){
            EditText teste = (EditText) findViewById(R.id.teste);
            teste.setText("Mexeu", TextView.BufferType.EDITABLE);
         }
         if ( !bProcessing )
             mHandler.post(DoImageProcessing);
+        */
 
+
+
+        if(comp_histogramas(hist0,hist1, mRgba, mRgba_anterior)<limite){
+            tag=true;
+        }
+        else{
+            tag=false;
+        }
         mRgba_anterior = mRgba.clone();
+        Imgproc.putText(mRgba,"teste", new Point(30,50),1, 1.2, new Scalar(255));
 
         return mRgba; // This function must return
     }
     //função para comparar histogramas
-    public double comp_histogramas (Mat mRgba, Mat mRgba_anterior){
+    public double comp_histogramas (Mat hist0, Mat hist1, Mat mRgba, Mat mRgba_anterior){
         double correlacao;
-        correlacao = Imgproc.compareHist(mRgba, mRgba_anterior, Imgproc.CV_COMP_CORREL);
+        Imgproc.calcHist(Arrays.asList(mRgba), new MatOfInt(0), new Mat(), hist0, histSize, ranges);
+        Imgproc.calcHist(Arrays.asList(mRgba_anterior), new MatOfInt(0), new Mat(), hist1, histSize, ranges);
+        Core.normalize(hist0, hist0, 0, 1, Core.NORM_MINMAX, -1, new Mat());
+        Core.normalize(hist1, hist1, 0, 1, Core.NORM_MINMAX, -1, new Mat());
+
+        correlacao = Imgproc.compareHist(hist0, hist1, Imgproc.CV_COMP_CORREL);
         return correlacao;
     }
     /*função pra trocar de camera, mCameraId começa com valor inicial 0, cada vez que o switch é usado seus valores são
@@ -188,6 +223,7 @@ public class Main_Show_Camera extends AppCompatActivity implements CvCameraViewL
         mOpenCvCameraView.setCameraIndex(mCameraId);
         mOpenCvCameraView.enableView();
     }
+
     public void onPreviewFrame (Mat FrameData, android.graphics.Camera arg1){
 
         //if (imageFormato == ImageFormat.NV21)
