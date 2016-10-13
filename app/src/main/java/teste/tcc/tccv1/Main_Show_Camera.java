@@ -67,6 +67,7 @@ public class Main_Show_Camera extends AppCompatActivity implements CvCameraViewL
     MatOfFloat ranges;
     MatOfInt histSize;
     boolean tag=false;
+    double col;
     histogramas hist;
     private boolean bProcessing = false;
     Handler mHandler = new Handler(Looper.getMainLooper());
@@ -160,8 +161,8 @@ public class Main_Show_Camera extends AppCompatActivity implements CvCameraViewL
         mRgbaT = new Mat(width, width, CvType.CV_8UC4);*/
         mRgba = new Mat(height, width, CvType.CV_8UC4);
         mRgba_anterior = new Mat(height, width, CvType.CV_8UC4);
-        hist0 = new Mat(hist_bins, hist_bins, CvType.CV_8UC4);
-        hist1 = new Mat(hist_bins, hist_bins, CvType.CV_8UC4);
+        hist0 = new Mat();
+        hist1 = new Mat();
         this.width = width;
         this.height = height;
 
@@ -190,8 +191,8 @@ public class Main_Show_Camera extends AppCompatActivity implements CvCameraViewL
         */
 
 
-
-        if(comp_histogramas(hist0,hist1, mRgba, mRgba_anterior)<limite){
+        col = comp_histogramas(hist0,hist1, mRgba, mRgba_anterior);
+        if(col<limite){
             tag=true;
         }
         else{
@@ -205,8 +206,8 @@ public class Main_Show_Camera extends AppCompatActivity implements CvCameraViewL
     //função para comparar histogramas
     public double comp_histogramas (Mat hist0, Mat hist1, Mat mRgba, Mat mRgba_anterior){
         double correlacao;
-        Imgproc.calcHist(Arrays.asList(mRgba), new MatOfInt(0), new Mat(), hist0, histSize, ranges);
-        Imgproc.calcHist(Arrays.asList(mRgba_anterior), new MatOfInt(0), new Mat(), hist1, histSize, ranges);
+        Imgproc.calcHist(Arrays.asList(mRgba), new MatOfInt(0,1), new Mat(), hist0, histSize, ranges);
+        Imgproc.calcHist(Arrays.asList(mRgba_anterior), new MatOfInt(0,1), new Mat(), hist1, histSize, ranges);
         Core.normalize(hist0, hist0, 0, 1, Core.NORM_MINMAX, -1, new Mat());
         Core.normalize(hist1, hist1, 0, 1, Core.NORM_MINMAX, -1, new Mat());
 
