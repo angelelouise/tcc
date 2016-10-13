@@ -2,6 +2,8 @@ package teste.tcc.tccv1;
 
 import android.hardware.Camera;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.SurfaceView;
@@ -25,8 +27,10 @@ import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
-
+import teste.tcc.tccv1.histogramas;
 import java.util.List;
+
+
 
 
 public class Main_Show_Camera extends AppCompatActivity implements CvCameraViewListener2{
@@ -47,7 +51,9 @@ public class Main_Show_Camera extends AppCompatActivity implements CvCameraViewL
     double limite = 0.97;
     // Variáveis para camera
     private int mCameraId =0;
-
+    histogramas hist;
+    private boolean bProcessing = false;
+    Handler mHandler = new Handler(Looper.getMainLooper());
 //OpenCV Manager, ajuda o app a se comunicar com o android pra fazer o openCV funcionar
     private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
         @Override
@@ -155,13 +161,14 @@ public class Main_Show_Camera extends AppCompatActivity implements CvCameraViewL
         //Core.transpose(mRgba, mRgbaT);
         //Imgproc.resize(mRgbaT, mRgbaF, mRgbaF.size(), 0,0, 0);
         //Core.flip(mRgbaF, mRgba, 1 );
-        if(comp_histogramas(mRgba,mRgba_anterior)< limite){
+        if(hist.tag()){
            EditText teste = (EditText) findViewById(R.id.teste);
            teste.setText("Mexeu", TextView.BufferType.EDITABLE);
         }
+        if ( !bProcessing )
+            mHandler.post(DoImageProcessing);
 
         mRgba_anterior = mRgba.clone();
-
 
         return mRgba; // This function must return
     }
@@ -181,5 +188,23 @@ public class Main_Show_Camera extends AppCompatActivity implements CvCameraViewL
         mOpenCvCameraView.setCameraIndex(mCameraId);
         mOpenCvCameraView.enableView();
     }
+    public void onPreviewFrame (Mat FrameData, android.graphics.Camera arg1){
 
+        //if (imageFormato == ImageFormat.NV21)
+        //{
+        //We only accept the NV21(YUV420) format.
+        if ( !bProcessing )
+            mHandler.post(DoImageProcessing);
+        //}
+    }
+    private Runnable DoImageProcessing = new Runnable()
+    {
+        public void run()
+        {
+            Log.i("MyRealTimeImageProcessing", "DoImageProcessing():");
+            bProcessing = true;
+            hist.comp_histogramas(mRgba,mRgba_anterior);
+            bProcessing = false;
+        }
+    };
 }
