@@ -39,6 +39,7 @@ import java.util.List;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 
+import static org.opencv.videoio.Videoio.CV_CAP_ANDROID;
 
 
 public class Main_Show_Camera extends AppCompatActivity implements CvCameraViewListener2{
@@ -71,6 +72,8 @@ public class Main_Show_Camera extends AppCompatActivity implements CvCameraViewL
     histogramas hist;
     private boolean bProcessing = false;
     Handler mHandler = new Handler(Looper.getMainLooper());
+    boolean first =true;
+
 //OpenCV Manager, ajuda o app a se comunicar com o android pra fazer o openCV funcionar
     private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
         @Override
@@ -176,10 +179,12 @@ public class Main_Show_Camera extends AppCompatActivity implements CvCameraViewL
         hist1.release();
     }
 //Deixa a camera melhor posicionada
+    @Override
     public Mat onCameraFrame(CvCameraViewFrame inputFrame) {
 
         // TODO Auto-generated method stub
         mRgba = inputFrame.rgba();
+        //inputFrame.copyTo(mRgba);
         mGray = inputFrame.gray();
 
         /*if(hist.tag()){
@@ -190,6 +195,12 @@ public class Main_Show_Camera extends AppCompatActivity implements CvCameraViewL
             mHandler.post(DoImageProcessing);
         */
 
+        /*na primeira vez que o programa roda a imagem anterior está vazia*/
+        if(first){
+            mRgba_anterior = mRgba.clone();
+            first = false;
+            Log.i("First processing", "teste");
+        }
 
         col = comp_histogramas(hist0,hist1, mRgba, mRgba_anterior);
         if(col<limite){
@@ -199,6 +210,7 @@ public class Main_Show_Camera extends AppCompatActivity implements CvCameraViewL
             tag=false;
         }
         mRgba_anterior = mRgba.clone();
+
         Imgproc.putText(mRgba,"teste", new Point(30,50),1, 1.2, new Scalar(255));
 
         return mRgba; // This function must return
