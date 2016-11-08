@@ -11,14 +11,30 @@
     tools:context="teste.tcc.tccv1.Menu">
 
 
-
     <ImageButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:srcCompat="@android:drawable/ic_menu_compass"
         android:id="@+id/cam1"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
         android:visibility="visible"
-        android:onClick="onClick" />
+        android:onClick="onClick"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginRight="27dp"
+        android:layout_marginEnd="27dp"
+        android:layout_marginTop="59dp" />
+
+    <TextView
+        android:text="Filtro Gaussiano"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="45dp"
+        android:layout_marginStart="45dp"
+        android:id="@+id/textView"
+        android:layout_marginBottom="12dp"
+        android:layout_alignBottom="@+id/cam1"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:textSize="18sp" />
 </RelativeLayout>

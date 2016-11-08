@@ -7,6 +7,7 @@ import android.os.Looper;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.SurfaceView;
+import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.CompoundButton;
@@ -59,7 +60,7 @@ public class Main_Show_Camera extends AppCompatActivity implements CvCameraViewL
     Mat hist1;
     int width;
     int height;
-    double limite = 0.97;
+    double limite = 0.997;
     // Variáveis para camera
     private int mCameraId =0;
     //variáveis para o histograma
@@ -191,8 +192,7 @@ public class Main_Show_Camera extends AppCompatActivity implements CvCameraViewL
            EditText teste = (EditText) findViewById(R.id.teste);
            teste.setText("Mexeu", TextView.BufferType.EDITABLE);
         }
-        if ( !bProcessing )
-            mHandler.post(DoImageProcessing);
+
         */
 
         /*na primeira vez que o programa roda a imagem anterior está vazia*/
@@ -204,14 +204,17 @@ public class Main_Show_Camera extends AppCompatActivity implements CvCameraViewL
 
         col = comp_histogramas(hist0,hist1, mRgba, mRgba_anterior);
         if(col<limite){
+            Imgproc.putText(mRgba,"ALTERACAO DE VIDEO", new Point(30,50),1, 3, new Scalar(255));
             tag=true;
+            //org.opencv.core.Size s =new Size(5,5);
+            //Imgproc.GaussianBlur(mRgba,mRgba,s,2);
+            /*if ( !bProcessing )
+                mHandler.post(DoImageProcessing);*/
         }
         else{
             tag=false;
         }
         mRgba_anterior = mRgba.clone();
-
-        Imgproc.putText(mRgba,"teste", new Point(30,50),1, 1.2, new Scalar(255));
 
         return mRgba; // This function must return
     }
@@ -252,8 +255,9 @@ public class Main_Show_Camera extends AppCompatActivity implements CvCameraViewL
         {
             Log.i("MyRealTimeImageProcessing", "DoImageProcessing():");
             bProcessing = true;
-            hist.comp_histogramas(mRgba,mRgba_anterior);
+            hist.filtro(mRgba);
             bProcessing = false;
         }
     };
+
 }
