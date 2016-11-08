@@ -5,7 +5,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
 import org.opencv.android.CameraBridgeViewBase;
+import org.opencv.core.CvType;
 import org.opencv.core.Mat;
+import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 
 import static android.content.ContentValues.TAG;
@@ -17,10 +19,15 @@ import static android.content.ContentValues.TAG;
 public class histogramas  {
 
     Mat mat_alterada;
+    Mat mRgba;
 
-    protected Mat filtro (Mat mRgba){
-        Imgproc.bilateralFilter(mRgba,mat_alterada,1,2,0.5,1);
-       return mat_alterada;
+    public Mat filtro (Mat mRgba){
+        mat_alterada = new Mat();
+        mRgba = new Mat();
+        this.mRgba = mRgba;
+        Imgproc.blur(mRgba,mat_alterada,new Size(5,5));
+
+        return mat_alterada;
     }
 
 

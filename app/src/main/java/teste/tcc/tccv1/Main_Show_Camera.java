@@ -70,7 +70,7 @@ public class Main_Show_Camera extends AppCompatActivity implements CvCameraViewL
     MatOfInt histSize;
     boolean tag=false;
     double col;
-    histogramas hist;
+    histogramas hist = new histogramas();
     private boolean bProcessing = false;
     Handler mHandler = new Handler(Looper.getMainLooper());
     boolean first =true;
@@ -206,10 +206,12 @@ public class Main_Show_Camera extends AppCompatActivity implements CvCameraViewL
         if(col<limite){
             Imgproc.putText(mRgba,"ALTERACAO DE VIDEO", new Point(30,50),1, 3, new Scalar(255));
             tag=true;
+            mHandler.post(DoImageProcessing);
             //org.opencv.core.Size s =new Size(5,5);
             //Imgproc.GaussianBlur(mRgba,mRgba,s,2);
-            /*if ( !bProcessing )
-                mHandler.post(DoImageProcessing);*/
+            /*if ( !bProcessing ){
+                mHandler.post(DoImageProcessing);
+              }*/
         }
         else{
             tag=false;
@@ -254,9 +256,9 @@ public class Main_Show_Camera extends AppCompatActivity implements CvCameraViewL
         public void run()
         {
             Log.i("MyRealTimeImageProcessing", "DoImageProcessing():");
-            bProcessing = true;
+            //bProcessing = true;
             hist.filtro(mRgba);
-            bProcessing = false;
+            //bProcessing = false;
         }
     };
 
