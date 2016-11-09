@@ -97,10 +97,10 @@ public abstract class CameraPreview implements SurfaceHolder.Callback, Camera.Pr
         mCamera = null;
     }
 
-    /*public abstract void histogramas(int largura, int altura, byte[] NV21FrameData, int[] pixels);
+    /*public abstract void filtro1(int largura, int altura, byte[] NV21FrameData, int[] pixels);
     static
     {
-        System.loadLibrary("histogramas");
+        System.loadLibrary("filtro1");
     }*/
 
     private Runnable DoImageProcessing = new Runnable()

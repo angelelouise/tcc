@@ -1,23 +1,18 @@
 package teste.tcc.tccv1;
 
-import android.hardware.Camera;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.SurfaceView;
-import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.CompoundButton;
-import android.widget.EditText;
 import android.widget.Switch;
-import android.widget.TextView;
 
 import org.opencv.core.MatOfFloat;
 import org.opencv.core.MatOfInt;
-import org.opencv.imgcodecs.Imgcodecs;
 // OpenCV classes
 import org.opencv.android.JavaCameraView;
 import org.opencv.android.BaseLoaderCallback;
@@ -31,16 +26,9 @@ import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
 import org.opencv.core.Scalar;
-import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
-import teste.tcc.tccv1.histogramas;
 
 import java.util.Arrays;
-import java.util.List;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-
-import static org.opencv.videoio.Videoio.CV_CAP_ANDROID;
 
 
 public class Main_Show_Camera extends AppCompatActivity implements CvCameraViewListener2{
@@ -70,7 +58,7 @@ public class Main_Show_Camera extends AppCompatActivity implements CvCameraViewL
     MatOfInt histSize;
     boolean tag=false;
     double col;
-    histogramas hist = new histogramas();
+    filtro1 hist = new filtro1();
     private boolean bProcessing = false;
     Handler mHandler = new Handler(Looper.getMainLooper());
     boolean first =true;
@@ -220,7 +208,7 @@ public class Main_Show_Camera extends AppCompatActivity implements CvCameraViewL
 
         return mRgba; // This function must return
     }
-    //função para comparar histogramas
+    //função para comparar filtro1
     public double comp_histogramas (Mat hist0, Mat hist1, Mat mRgba, Mat mRgba_anterior){
         double correlacao;
         Imgproc.calcHist(Arrays.asList(mRgba), new MatOfInt(0,1), new Mat(), hist0, histSize, ranges);
