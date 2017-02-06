@@ -18,7 +18,8 @@ import android.view.WindowManager;
 public class Menu extends AppCompatActivity {
     ImageButton cam1;
     ImageButton cam2;
-    boolean tag_f;
+    ImageButton cam3;
+    int tag_f=1;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -26,25 +27,37 @@ public class Menu extends AppCompatActivity {
         cam1 = (ImageButton) findViewById(R.id.cam1);
         cam1.setOnClickListener(cam1handler);
         cam2 = (ImageButton) findViewById(R.id.cam2);
-        //cam2.setOnClickListener(cam2handler);
+        cam2.setOnClickListener(cam2handler);
+        cam3 = (ImageButton) findViewById(R.id.cam3);
+        cam3.setOnClickListener(cam3handler);
     }
 
     View.OnClickListener cam1handler = new View.OnClickListener(){
         @Override
         public void onClick(View v) {
+            tag_f=1;
             startSecondActivity(v);
-            tag_f=false;
+
         }
 
     };
-    /*View.OnClickListener cam2handler = new View.OnClickListener(){
+    View.OnClickListener cam2handler = new View.OnClickListener(){
         @Override
         public void onClick(View v) {
+            tag_f=2;
             startSecondActivity(v);
-            tag_f=true;
+
         }
 
-    };*/
+    };View.OnClickListener cam3handler = new View.OnClickListener(){
+        @Override
+        public void onClick(View v) {
+            tag_f=3;
+            startSecondActivity(v);
+
+        }
+
+    };
     public void startSecondActivity(View view) {//Alternado entre duas activies
         Intent secondActivity = new Intent(this, Main_Show_Camera.class);
         startActivity(secondActivity);

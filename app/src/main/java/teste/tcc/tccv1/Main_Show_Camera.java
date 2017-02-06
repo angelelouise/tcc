@@ -194,9 +194,16 @@ public class Main_Show_Camera extends AppCompatActivity implements CvCameraViewL
             Imgproc.putText(mRgba,"ALTERACAO DE VIDEO", new Point(30,50),1, 3, new Scalar(255));
             tag=true;
             mHandler.post(DoImageProcessing);
-            /*
+
+        }
+        else{
+            tag=false;
+        }
+        mRgba_anterior = mRgba.clone();
+        if(tag_filtro.tag_f==3){
+
             Mat gray = new Mat(height, width, CV_8U, new Scalar(255));
-            this.mRgba = mRgba;
+            //this.mRgba = mRgba;
             mRgba.channels();
             List<MatOfPoint> contours = new ArrayList<MatOfPoint>();
             Mat hierarchy = new Mat();
@@ -212,13 +219,8 @@ public class Main_Show_Camera extends AppCompatActivity implements CvCameraViewL
             }
             hierarchy.release();
             return borders;
-            */
-        }
-        else{
-            tag=false;
-        }
-        mRgba_anterior = mRgba.clone();
 
+        }
         return mRgba;
     }
     //função para comparar filtro1
@@ -243,12 +245,12 @@ public class Main_Show_Camera extends AppCompatActivity implements CvCameraViewL
         mOpenCvCameraView.enableView();
     }
     /*Função para selecionar os filtros que vão na thread*/
-    public Mat Mythread(Mat mRgba){
-        if(tag_filtro.tag_f=true) {
+    public Mat Mythread(Mat mRgba, Mat mGray, int height, int width){
+        if(tag_filtro.tag_f==1) {
             return hist.filtro(mRgba);
-            //return hist.pontilhismo(mGray, height, width);
+            //return hist.pontilhismo(mRgba,mGray, height, width);
         }
-        if(tag_filtro.tag_f=false) {
+        if(tag_filtro.tag_f==2) {
             return hist.pontilhismo(mRgba, mGray, height, width);
         }
 
@@ -269,7 +271,7 @@ public class Main_Show_Camera extends AppCompatActivity implements CvCameraViewL
         {
             Log.i("RealTimeImageProcessing", "DoImageProcessing():");
             //bProcessing = true;
-            mRgba = Mythread(mRgba);
+            mRgba = Mythread(mRgba, mGray, height, width);
             //bProcessing = false;
         }
     };

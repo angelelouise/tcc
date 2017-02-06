@@ -28,6 +28,7 @@ public class filtro1 {
 
     Mat mat_alterada;
     Mat mRgba;
+    Mat mGray;
     Mat hierarchy;
     List<MatOfPoint> contours;
     private Mat borders;
@@ -42,6 +43,7 @@ public class filtro1 {
     }
     public Mat pontilhismo (Mat mRgba, Mat mGray, int height, int width){
         this.mRgba = mRgba;
+        this.mGray = mRgba;
         contours = new ArrayList<MatOfPoint>();
         hierarchy = new Mat();
         borders = new Mat(height, width, CV_8U, new Scalar(255));
