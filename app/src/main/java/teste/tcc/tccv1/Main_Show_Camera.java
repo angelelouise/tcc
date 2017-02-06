@@ -24,11 +24,16 @@ import org.opencv.android.OpenCVLoader;
 import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
+import org.opencv.core.MatOfPoint;
 import org.opencv.core.Point;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+
+import static org.opencv.core.CvType.CV_8U;
 
 
 public class Main_Show_Camera extends AppCompatActivity implements CvCameraViewListener2{
@@ -48,7 +53,7 @@ public class Main_Show_Camera extends AppCompatActivity implements CvCameraViewL
     Mat hist1;
     int width;
     int height;
-    double limite = 0.9;
+    double limite = 0.95;
     // Variáveis para camera
     private int mCameraId =0;
     //variáveis para o histograma
@@ -176,14 +181,7 @@ public class Main_Show_Camera extends AppCompatActivity implements CvCameraViewL
         mRgba = inputFrame.rgba();
         //inputFrame.copyTo(mRgba);
         mGray = inputFrame.gray();
-
-        /*if(hist.tag()){
-           EditText teste = (EditText) findViewById(R.id.teste);
-           teste.setText("Mexeu", TextView.BufferType.EDITABLE);
-        }
-
-        */
-
+        Mat borders = new Mat();
         /*na primeira vez que o programa roda a imagem anterior está vazia*/
         if(first){
             mRgba_anterior = mRgba.clone();
@@ -196,18 +194,32 @@ public class Main_Show_Camera extends AppCompatActivity implements CvCameraViewL
             Imgproc.putText(mRgba,"ALTERACAO DE VIDEO", new Point(30,50),1, 3, new Scalar(255));
             tag=true;
             mHandler.post(DoImageProcessing);
-            //org.opencv.core.Size s =new Size(5,5);
-            //Imgproc.GaussianBlur(mRgba,mRgba,s,2);
-            /*if ( !bProcessing ){
-                mHandler.post(DoImageProcessing);
-              }*/
+            /*
+            Mat gray = new Mat(height, width, CV_8U, new Scalar(255));
+            this.mRgba = mRgba;
+            mRgba.channels();
+            List<MatOfPoint> contours = new ArrayList<MatOfPoint>();
+            Mat hierarchy = new Mat();
+            borders = new Mat(height, width, CV_8U, new Scalar(255));
+            Mat points = new Mat(height, width, CV_8U, new Scalar(255));
+            Imgproc.putText(mRgba,"filtro 2", new Point(30,50),1, 2, new Scalar(255));
+            Imgproc.Canny(mGray, borders, 80, 100);
+            //Imgproc.cvtColor(borders, gray, Imgproc.COLOR_RGBA2GRAY);
+            Imgproc.findContours(borders, contours, hierarchy, Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_SIMPLE);
+            //desenhando os círculos
+            for (int contourIdx = 0; contourIdx < contours.size(); contourIdx++) {
+                Imgproc.drawContours(mRgba, contours, contourIdx, new Scalar(0, 0, 255), -1);
+            }
+            hierarchy.release();
+            return borders;
+            */
         }
         else{
             tag=false;
         }
         mRgba_anterior = mRgba.clone();
 
-        return mRgba; // This function must return
+        return mRgba;
     }
     //função para comparar filtro1
     public double comp_histogramas (Mat hist0, Mat hist1, Mat mRgba, Mat mRgba_anterior){
@@ -231,13 +243,16 @@ public class Main_Show_Camera extends AppCompatActivity implements CvCameraViewL
         mOpenCvCameraView.enableView();
     }
     /*Função para selecionar os filtros que vão na thread*/
-    public void Mythread(Mat mRgba){
+    public Mat Mythread(Mat mRgba){
         if(tag_filtro.tag_f=true) {
-            hist.filtro(mRgba);
+            return hist.filtro(mRgba);
+            //return hist.pontilhismo(mGray, height, width);
         }
         if(tag_filtro.tag_f=false) {
-            hist.pontilhismo(mRgba, height, width);
+            return hist.pontilhismo(mRgba, mGray, height, width);
         }
+
+        return mRgba;
     }
     public void onPreviewFrame (Mat FrameData, android.graphics.Camera arg1){
 
@@ -254,9 +269,8 @@ public class Main_Show_Camera extends AppCompatActivity implements CvCameraViewL
         {
             Log.i("RealTimeImageProcessing", "DoImageProcessing():");
             //bProcessing = true;
-            Mythread(mRgba);
+            mRgba = Mythread(mRgba);
             //bProcessing = false;
-
         }
     };
 
