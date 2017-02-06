@@ -30,38 +30,43 @@ public class filtro1 {
     Mat mRgba;
     Mat hierarchy;
     List<MatOfPoint> contours;
-    private Mat mIntermediateMat;
+    private Mat borders;
 
     public Mat filtro (Mat mRgba){
         mat_alterada = new Mat();
-        mRgba = new Mat();
         this.mRgba = mRgba;
-        Imgproc.blur(mRgba,mat_alterada,new Size(5,5));
-        Imgproc.putText(mRgba,"thread ok", new Point(30,50),1, 2, new Scalar(255));
+        //Imgproc.blur(mRgba,mat_alterada,new Size(5,5));
+        Imgproc.cvtColor(mRgba, mat_alterada, Imgproc.COLOR_RGBA2GRAY);
+        //Imgproc.putText(mRgba,"filtro 1", new Point(30,50),1, 2, new Scalar(255));
         return mat_alterada;
     }
     public Mat pontilhismo (Mat mRgba, int height, int width){
-        mRgba = new Mat();
-        char gray;
+        Mat gray = new Mat(height, width, CV_8U, new Scalar(255));
         this.mRgba = mRgba;
+        mRgba.channels();
         contours = new ArrayList<MatOfPoint>();
         hierarchy = new Mat();
+        borders = new Mat(height, width, CV_8U, new Scalar(255));
         Mat points = new Mat(height, width, CV_8U, new Scalar(255));
-        int x,y;
 
-        Imgproc.Canny(mRgba, mIntermediateMat, 80, 100);
-        Imgproc.findContours(mIntermediateMat, contours, hierarchy, Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_SIMPLE, new Point(0, 0));
+        int x,y;
+        Imgproc.putText(mRgba,"filtro 2", new Point(30,50),1, 2, new Scalar(255));
+        Imgproc.Canny(mRgba, borders, 80, 100);
+        Imgproc.cvtColor(borders, gray, Imgproc.COLOR_RGBA2GRAY);
+        Imgproc.findContours(gray, contours, hierarchy, Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_SIMPLE);
         //desenhando os círculos
+        for (int contourIdx = 0; contourIdx < contours.size(); contourIdx++) {
+            Imgproc.drawContours(mRgba, contours, contourIdx, new Scalar(0, 0, 255), -1);
+        }
+        hierarchy.release();
+        x=1;
+        y=1;
         for(int i=0; i<contours.size(); i++) {
             for (int j=0; j<contours.get(i).rows(); j++) {
-                gray = mRgba.get(contours.get(i).get(j).y, contours.get(i).get(j).x)[0];
-                Imgproc.circle(points, Point(contours.get(i).get(j).x, contours.get(i).get(j).y),1, new Scalar(gray, gray, gray));
+                //gray = mRgba.get(contours.get(i).get(j), contours.get(i).get(j));
+                //Imgproc.circle(points, new Point(contours.get(i).get(j), contours.get(i).get(j)),1, new Scalar(gray, gray, gray));
             }
         }
-
-
-
-        hierarchy.release();
         return mRgba;
     }
 

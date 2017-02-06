@@ -48,7 +48,7 @@ public class Main_Show_Camera extends AppCompatActivity implements CvCameraViewL
     Mat hist1;
     int width;
     int height;
-    double limite = 0.997;
+    double limite = 0.9;
     // Variáveis para camera
     private int mCameraId =0;
     //variáveis para o histograma
@@ -59,6 +59,7 @@ public class Main_Show_Camera extends AppCompatActivity implements CvCameraViewL
     boolean tag=false;
     double col;
     filtro1 hist = new filtro1();
+    Menu tag_filtro = new Menu();
     private boolean bProcessing = false;
     Handler mHandler = new Handler(Looper.getMainLooper());
     boolean first =true;
@@ -229,7 +230,15 @@ public class Main_Show_Camera extends AppCompatActivity implements CvCameraViewL
         mOpenCvCameraView.setCameraIndex(mCameraId);
         mOpenCvCameraView.enableView();
     }
-
+    /*Função para selecionar os filtros que vão na thread*/
+    public void Mythread(Mat mRgba){
+        if(tag_filtro.tag_f=true) {
+            hist.filtro(mRgba);
+        }
+        if(tag_filtro.tag_f=false) {
+            hist.pontilhismo(mRgba, height, width);
+        }
+    }
     public void onPreviewFrame (Mat FrameData, android.graphics.Camera arg1){
 
         //if (imageFormato == ImageFormat.NV21)
@@ -243,10 +252,11 @@ public class Main_Show_Camera extends AppCompatActivity implements CvCameraViewL
     {
         public void run()
         {
-            Log.i("MyRealTimeImageProcessing", "DoImageProcessing():");
+            Log.i("RealTimeImageProcessing", "DoImageProcessing():");
             //bProcessing = true;
-            hist.filtro(mRgba);
+            Mythread(mRgba);
             //bProcessing = false;
+
         }
     };
 
