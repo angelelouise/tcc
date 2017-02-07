@@ -205,20 +205,29 @@ public class Main_Show_Camera extends AppCompatActivity implements CvCameraViewL
             Mat gray = new Mat(height, width, CV_8U, new Scalar(255));
             //this.mRgba = mRgba;
             mRgba.channels();
-            List<MatOfPoint> contours = new ArrayList<MatOfPoint>();
+            List<MatOfPoint> contornos = new ArrayList<MatOfPoint>();
             Mat hierarchy = new Mat();
             borders = new Mat(height, width, CV_8U, new Scalar(255));
             Mat points = new Mat(height, width, CV_8U, new Scalar(255));
             Imgproc.putText(mRgba,"filtro 2", new Point(30,50),1, 2, new Scalar(255));
             Imgproc.Canny(mGray, borders, 80, 100);
             //Imgproc.cvtColor(borders, gray, Imgproc.COLOR_RGBA2GRAY);
-            Imgproc.findContours(borders, contours, hierarchy, Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_SIMPLE);
-            //desenhando os círculos
-            for (int contourIdx = 0; contourIdx < contours.size(); contourIdx++) {
-                Imgproc.drawContours(mRgba, contours, contourIdx, new Scalar(0, 0, 255), -1);
-            }
+            Imgproc.findContours(borders, contornos, hierarchy, Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_SIMPLE);
+
+            /*for (int contourIdx = 0; contourIdx < contornos.size(); contourIdx++) {
+                Imgproc.drawContours(mRgba, contornos, contourIdx, new Scalar(0, 0, 255), -1);
+            }*/
             hierarchy.release();
-            return borders;
+            //desenhando os círculos
+            for(int i = 0; i< contornos.size(); i++) {
+                for (int j = 0; j< contornos.get(i).toArray().length; j++) {
+                    Point[] aux= contornos.get(i).toArray();
+                    double[] xgray = mRgba.get(i,j);
+                    System.out.println(aux);
+                    Imgproc.circle(points, new Point(aux[j].x, aux[j].y),1, new Scalar(0,255,0));
+                }
+            }
+            return points;
 
         }
         return mRgba;

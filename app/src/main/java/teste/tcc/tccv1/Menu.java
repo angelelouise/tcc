@@ -19,7 +19,7 @@ public class Menu extends AppCompatActivity {
     ImageButton cam1;
     ImageButton cam2;
     ImageButton cam3;
-    int tag_f=1;
+    int tag_f=3;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
