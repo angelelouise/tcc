@@ -19,7 +19,8 @@ public class Menu extends AppCompatActivity {
     ImageButton cam1;
     ImageButton cam2;
     ImageButton cam3;
-    int tag_f=3;
+    private int tag_f=3;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -30,12 +31,23 @@ public class Menu extends AppCompatActivity {
         cam2.setOnClickListener(cam2handler);
         cam3 = (ImageButton) findViewById(R.id.cam3);
         cam3.setOnClickListener(cam3handler);
+
     }
+    private void setTag1(){
+        tag_f=1;
+    }
+    private void setTag2(){
+        tag_f=2;
+    }
+    private void setTag3(){
+        tag_f=3;
+    }
+
 
     View.OnClickListener cam1handler = new View.OnClickListener(){
         @Override
         public void onClick(View v) {
-            tag_f=1;
+            setTag1();
             startSecondActivity(v);
 
         }
@@ -44,7 +56,7 @@ public class Menu extends AppCompatActivity {
     View.OnClickListener cam2handler = new View.OnClickListener(){
         @Override
         public void onClick(View v) {
-            tag_f=2;
+            setTag2();
             startSecondActivity(v);
 
         }
@@ -52,7 +64,7 @@ public class Menu extends AppCompatActivity {
     };View.OnClickListener cam3handler = new View.OnClickListener(){
         @Override
         public void onClick(View v) {
-            tag_f=3;
+            setTag3();
             startSecondActivity(v);
 
         }
@@ -62,5 +74,9 @@ public class Menu extends AppCompatActivity {
         Intent secondActivity = new Intent(this, Main_Show_Camera.class);
         startActivity(secondActivity);
     }
+    public int getTag(){
+        return tag_f;
+    }
+
 
 }

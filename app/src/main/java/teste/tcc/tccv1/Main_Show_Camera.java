@@ -53,6 +53,7 @@ public class Main_Show_Camera extends AppCompatActivity implements CvCameraViewL
     Mat hist1;
     int width;
     int height;
+    int tag_m;
     double limite = 0.95;
     // Variáveis para camera
     private int mCameraId =0;
@@ -64,7 +65,7 @@ public class Main_Show_Camera extends AppCompatActivity implements CvCameraViewL
     boolean tag=false;
     double col;
     filtro1 hist = new filtro1();
-    Menu tag_filtro = new Menu();
+    Menu menu = new Menu();
     private boolean bProcessing = false;
     Handler mHandler = new Handler(Looper.getMainLooper());
     boolean first =true;
@@ -200,7 +201,7 @@ public class Main_Show_Camera extends AppCompatActivity implements CvCameraViewL
             tag=false;
         }
         mRgba_anterior = mRgba.clone();
-        if(tag_filtro.tag_f==3){
+        if(menu.getTag()==3){
 
             Mat gray = new Mat(height, width, CV_8U, new Scalar(255));
             //this.mRgba = mRgba;
@@ -255,11 +256,11 @@ public class Main_Show_Camera extends AppCompatActivity implements CvCameraViewL
     }
     /*Função para selecionar os filtros que vão na thread*/
     public Mat Mythread(Mat mRgba, Mat mGray, int height, int width){
-        if(tag_filtro.tag_f==1) {
+        if(menu.getTag()==1) {
             return hist.filtro(mRgba);
             //return hist.pontilhismo(mRgba,mGray, height, width);
         }
-        if(tag_filtro.tag_f==2) {
+        if(menu.getTag()==2) {
             return hist.pontilhismo(mRgba, mGray, height, width);
         }
 
@@ -274,6 +275,7 @@ public class Main_Show_Camera extends AppCompatActivity implements CvCameraViewL
             mHandler.post(DoImageProcessing);
         //}
     }
+
     private Runnable DoImageProcessing = new Runnable()
     {
         public void run()

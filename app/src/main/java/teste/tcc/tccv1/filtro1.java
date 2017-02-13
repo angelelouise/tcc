@@ -51,14 +51,6 @@ public class filtro1 {
         }
         hierarquia.release();
 
-        for(int i = 0; i< contornos.size(); i++) {
-            for (int j = 0; j< contornos.get(i).toArray().length; j++) {
-                Point[] aux= contornos.get(i).toArray();
-                double[] gray = mRgba.get(i,j);
-                System.out.println(aux);
-                Imgproc.circle(points, new Point(aux[j].x, aux[j].y),1, new Scalar(gray[0], gray[1], gray[2]));
-            }
-        }
         return borders;
     }
 
